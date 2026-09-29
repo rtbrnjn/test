@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLBB Edu-Adventure Pro - Bahasa Arab Kelas 11</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Orbitron:wght@500;700;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mlbb: {
+                            gold: '#f3c656',
+                            darkGold: '#b8860b',
+                            blue: '#00ccff',
+                            darkBlue: '#0d1b2a',
+                            purple: '#9d4edd',
+                            red: '#ff0055',
+                            cardBg: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        arabic: ['Tajawal', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #080d1a;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .moba-title {
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 15px rgba(243, 198, 86, 0.6), 0 0 30px rgba(0, 204, 255, 0.4);
+        }
+        .arabic-font {
+            font-family: 'Tajawal', sans-serif;
+            direction: rtl;
+        }
+        .moba-frame {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(13, 27, 42, 0.98) 100%);
+            border: 2px solid #f3c656;
+            box-shadow: 0 0 25px rgba(243, 198, 86, 0.3), inset 0 0 20px rgba(0, 204, 255, 0.2);
+            border-radius: 1rem;
+        }
+        .moba-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(243, 198, 86, 0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .moba-card:hover, .moba-card:active {
+            border-color: #f3c656;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(243, 198, 86, 0.4);
+        }
+        .option-btn {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border: 1.5px solid #334155;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .option-btn:hover, .option-btn:active {
+            border-color: #00ccff;
+            background: linear-gradient(180deg, #1e3a8a 0%, #0f172a 100%);
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.4);
+        }
+        .hp-hero { background: linear-gradient(90deg, #00ff87 0%, #60efff 100%); }
+        .hp-enemy { background: linear-gradient(90deg, #ff0055 0%, #ff5050 100%); }
+
+        @keyframes bcBannerAnim {
+            0% { transform: translate(-50%, -100%) scale(0.5); opacity: 0; }
+            30% { transform: translate(-50%, 0) scale(1.1); opacity: 1; }
+            70% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -20px) scale(0.95); opacity: 0; }
+        }
+        .bc-banner-active { animation: bcBannerAnim 2.2s ease-in-out forwards; }
+
+        @keyframes damageShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .shake-effect { animation: damageShake 0.4s ease-in-out; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative bg-slate-950 text-slate-100">
+
+    <header class="w-full bg-slate-900/95 border-b border-amber-500/40 sticky top-0 z-40 backdrop-blur-md px-4 py-3 shadow-lg">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-amber-300 to-cyan-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h1 class="moba-title text-base sm:text-lg font-black text-amber-400 tracking-wider">
+                        MLBB <span class="text-cyan-400">EDU-ADVENTURE</span> PRO
+                    </h1>
+                    <p class="text-[11px] text-slate-400">Land of Knowledge: Bahasa Arab Kelas 11 (Wisata & Grammar)</p>
+                </div>
+            </div>
+
+            <!-- Enhanced Audio Panel with Epic Battle BGM & Ducking Controller -->
+            <div class="flex items-center flex-wrap gap-2.5 bg-slate-950/80 p-2 rounded-xl border border-amber-500/30">
+                <button onclick="forceUnlockAndPlayAudio()" id="audio-play-btn" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-1.5 transition shadow-lg shadow-amber-500/20 animate-pulse cursor-pointer">
+                    <i id="audio-play-icon" class="fa-solid fa-play"></i>
+                    <span id="audio-play-status" class="font-bold">AKTIFKAN BGM EPIK</span>
+                </button>
+
+                <div class="text-[11px] text-cyan-300 font-medium px-2.5 py-1 bg-slate-900 rounded-lg border border-slate-800 flex items-center gap-2">
+                    <i id="music-disc-icon" class="fa-solid fa-compact-disc text-amber-400"></i>
+                    <span id="track-name-display">Epic Battle Beats Ready</span>
+                </div>
+
+                <button onclick="toggleAnnouncerVoice()" id="announcer-toggle-btn" class="px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:border-amber-400 text-xs text-slate-300 flex items-center gap-1 transition cursor-pointer" title="Suara Pengumuman Match">
+                    <i id="announcer-icon" class="fa-solid fa-volume-high text-amber-400"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="bc-announcer-banner" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none hidden">
+        <div class="bg-gradient-to-r from-red-600 via-amber-500 to-cyan-500 p-[2px] rounded-2xl shadow-2xl shadow-amber-500/50">
+            <div class="bg-slate-950/90 backdrop-blur-md px-8 py-3 rounded-2xl text-center">
+                <h3 id="bc-main-text" class="moba-title text-2xl sm:text-4xl font-black text-amber-300 tracking-wider uppercase">
+                    MATCH START!
+                </h3>
+                <p id="bc-sub-text" class="text-xs text-slate-200 font-semibold mt-0.5">Selamat datang di Land of Knowledge!</p>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-container" class="flex-grow max-w-5xl w-full mx-auto p-4 flex flex-col justify-center my-auto z-10 relative">
+
+        <!-- SCREEN 1: START SCREEN -->
+        <section id="screen-start" class="moba-frame p-6 sm:p-8 relative overflow-hidden">
+            <div class="text-center mb-6">
+                <span class="px-3 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold rounded-full uppercase tracking-widest inline-block mb-2">
+                    <i class="fa-solid fa-gamepad mr-1"></i> Mode Battle 20 Soal
+                </span>
+                <h2 class="moba-title text-2xl sm:text-4xl font-black text-amber-400 mb-2">
+                    MASUKKAN IDENTITAS HERO
+                </h2>
+                <p class="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto">
+                    Taklukan 20 Lord Soal Bahasa Arab Kelas 11 diiringi musik pertarungan elektronik MLBB yang menegangkan & suara announcer robot dubbing profesional!
+                </p>
+            </div>
+
+            <div class="max-w-md mx-auto flex flex-col gap-4 mb-6">
+                <div>
+                    <label class="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-1">Nama Player / Hero ID:</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user-ninja absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                        <input type="text" id="player-name" placeholder="Contoh: Zilong Pro / Suci" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-100 outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-1">Kelas / Squad ID:</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-graduation-cap absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                        <input type="text" id="player-class" placeholder="Contoh: XI MIPA 1 / XI IPS 2" class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-100 outline-none transition">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <label class="block text-xs font-bold text-center text-amber-300 uppercase tracking-wider mb-3">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Pilih Class Role Hero:
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div onclick="selectHeroRole('Mage')" id="hero-role-Mage" class="moba-card p-3 rounded-xl border border-amber-500/40 text-center bg-amber-500/10">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-purple-600/30 border border-purple-400 flex items-center justify-center text-2xl text-purple-300 mb-2 pointer-events-none">
+                            <i class="fa-solid fa-hat-wizard"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-amber-300 pointer-events-none">MAGE</h4>
+                        <p class="text-[10px] text-slate-400 pointer-events-none">Kagura / Lunox</p>
+                    </div>
+
+                    <div onclick="selectHeroRole('Assassin')" id="hero-role-Assassin" class="moba-card p-3 rounded-xl border border-slate-800 text-center">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-red-600/30 border border-red-400 flex items-center justify-center text-2xl text-red-300 mb-2 pointer-events-none">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-200 pointer-events-none">ASSASSIN</h4>
+                        <p class="text-[10px] text-slate-400 pointer-events-none">Gusion / Ling</p>
+                    </div>
+
+                    <div onclick="selectHeroRole('Tank')" id="hero-role-Tank" class="moba-card p-3 rounded-xl border border-slate-800 text-center">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-cyan-600/30 border border-cyan-400 flex items-center justify-center text-2xl text-cyan-300 mb-2 pointer-events-none">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-200 pointer-events-none">TANK</h4>
+                        <p class="text-[10px] text-slate-400 pointer-events-none">Tigreal / Khufra</p>
+                    </div>
+
+                    <div onclick="selectHeroRole('Marksman')" id="hero-role-Marksman" class="moba-card p-3 rounded-xl border border-slate-800 text-center">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-amber-600/30 border border-amber-400 flex items-center justify-center text-2xl text-amber-300 mb-2 pointer-events-none">
+                            <i class="fa-solid fa-crosshair"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-200 pointer-events-none">MARKSMAN</h4>
+                        <p class="text-[10px] text-slate-400 pointer-events-none">Miya / Beatrix</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="startGame()" class="px-8 py-3.5 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-base rounded-2xl shadow-xl shadow-amber-500/30 transition transform hover:scale-105 active:scale-95 moba-title uppercase tracking-wider cursor-pointer">
+                    <i class="fa-solid fa-play mr-2"></i> MULAI BATTLE (MATCH START)
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: BATTLE SCREEN -->
+        <section id="screen-battle" class="hidden moba-frame p-4 sm:p-6 relative flex-col gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900/90 p-4 rounded-xl border border-amber-500/30">
+                <div class="flex items-center gap-3">
+                    <div id="hero-avatar-box" class="w-12 h-12 rounded-xl bg-purple-600/30 border-2 border-amber-400 flex items-center justify-center text-2xl text-amber-300">
+                        <i class="fa-solid fa-hat-wizard"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-center text-xs font-bold mb-1">
+                            <span id="display-hero-name" class="text-amber-300 font-orbitron">PLAYER ID</span>
+                            <span id="hero-hp-text" class="text-emerald-400">100 / 100 HP</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800">
+                            <div id="hero-hp-bar" class="hp-hero h-full transition-all duration-300 w-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="flex-grow">
+                        <div class="flex justify-between items-center text-xs font-bold mb-1">
+                            <span class="text-red-400 font-orbitron"><i class="fa-solid fa-dragon mr-1"></i> LORD WISATA ARAB</span>
+                            <span id="enemy-hp-text" class="text-red-400">100% HP</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800">
+                            <div id="enemy-hp-bar" class="hp-enemy h-full transition-all duration-300 w-full"></div>
+                        </div>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-red-600/30 border-2 border-red-500 flex items-center justify-center text-2xl text-red-400">
+                        <i class="fa-solid fa-skull"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between bg-slate-900/60 px-4 py-2 rounded-lg border border-slate-800 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold rounded-md font-orbitron">
+                        SOAL <span id="current-q-num">1</span> / 20
+                    </span>
+                    <span id="streak-badge" class="hidden px-2.5 py-1 bg-purple-500/20 border border-purple-500/40 text-purple-300 font-bold rounded-md font-orbitron animate-pulse">
+                        <i class="fa-solid fa-fire mr-1"></i> <span id="streak-count">0</span> STREAK
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <i class="fa-regular fa-clock text-amber-400"></i>
+                    <span id="battle-timer" class="font-orbitron font-bold text-slate-200">00:00</span>
+                </div>
+            </div>
+
+            <div id="question-card" class="bg-slate-900/90 border border-amber-500/30 rounded-2xl p-5 sm:p-7 relative overflow-hidden shadow-xl">
+                <div class="mb-4">
+                    <span class="text-[11px] font-bold text-cyan-400 uppercase tracking-widest block mb-1">
+                        <i class="fa-solid fa-book mr-1"></i> Materi Bahasa Arab Kelas 11:
+                    </span>
+                    <h3 id="question-text" class="text-lg sm:text-2xl font-bold text-slate-100 leading-relaxed">
+                        Pertanyaan Soal...
+                    </h3>
+                </div>
+
+                <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6"></div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+                <span id="battle-log" class="truncate max-w-md text-amber-300">
+                    <i class="fa-solid fa-circle-info mr-1"></i> Musik Epic Battle & Announcer Siap
+                </span>
+                <button onclick="skipQuestion()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition cursor-pointer">
+                    Lewati Soal <i class="fa-solid fa-forward ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: RESULT SCREEN -->
+        <section id="screen-result" class="hidden moba-frame p-6 sm:p-8 relative">
+            <div class="text-center mb-6">
+                <div id="result-status-badge" class="inline-block px-6 py-2 rounded-full font-black moba-title text-2xl sm:text-4xl mb-3 shadow-xl">
+                    VICTORY!
+                </div>
+                <h2 class="text-xl font-bold text-slate-100" id="result-player-title">
+                    Hebat! Kamu Berhasil Menaklukkan Land of Knowledge!
+                </h2>
+                <p class="text-xs text-slate-400 mt-1" id="result-player-info">Hero Name (Kelas)</p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">SKOR AKHIR</span>
+                    <span id="res-score" class="text-2xl sm:text-3xl font-black text-amber-400 font-orbitron">100</span>
+                </div>
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">BENAR / TOTAL</span>
+                    <span id="res-correct" class="text-2xl sm:text-3xl font-black text-emerald-400 font-orbitron">20 / 20</span>
+                </div>
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">MAX STREAK</span>
+                    <span id="res-streak" class="text-2xl sm:text-3xl font-black text-purple-400 font-orbitron">5</span>
+                </div>
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">RANK MLBB</span>
+                    <span id="res-rank" class="text-lg sm:text-xl font-black text-cyan-300 font-orbitron">MYTHIC</span>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 mb-6">
+                <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center justify-between">
+                    <span><i class="fa-solid fa-list-check mr-2"></i> Review Kunci Jawaban Lengkap (20 Soal)</span>
+                    <span class="text-[11px] text-slate-500 font-normal">Evaluasi Belajar</span>
+                </h3>
+                <div id="review-list" class="max-h-80 overflow-y-auto space-y-3 pr-2"></div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-3">
+                <button onclick="resetGame()" class="px-8 py-3 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-slate-950 font-black rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 uppercase tracking-wider font-orbitron cursor-pointer">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> MAIN LAGI (REMATCH)
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="w-full text-center py-3 text-xs text-slate-500 border-t border-slate-900 bg-slate-950">
+        MLBB Edu-Adventure Pro &bull; Bahasa Arab Kelas 11 &bull; Land of Knowledge
+    </footer>
+
+    <script>
+        const QUESTIONS_DATA = [
+            { q: "Apa arti dari kata \"ذَهَبْتُ\" dalam bahasa Indonesia?", options: ["Saya pergi", "Kami pergi", "Kamu pergi", "Dia pergi"], answer: "Saya pergi" },
+            { q: "Lengkapilah kalimat berikut dengan fi'il madhi yang tepat!\nنَحْنُ ______ إِلَى غَارِ فِينْدُول.", options: ["ذَهَبْتُ", "ذَهَبْنَا", "ذَهَبَ", "ذَهَبَتْ"], answer: "ذَهَبْنَا" },
+            { q: "Apa arti dari kosakata \"شَاطِئٌ\" dalam tema pariwisata?", options: ["Gunung", "Pantai", "Danau", "Air Terjun"], answer: "Pantai" },
+            { q: "Manakah kata berikut yang merupakan bentuk fi'il madhi (فِعْل مَاضٍ)?", options: ["يَذْهَبُ", "ذَهَبَ", "اِذْهَبْ", "ذَاهِبٌ"], answer: "ذَهَبَ" },
+            { q: "Apa terjemahan yang tepat dari kalimat: \"ذَهَبْنَا إِلَى غَارِ فِينْدُولِ\"؟", options: ["Saya pergi ke Goa Pindul.", "Kami pergi ke Goa Pindul.", "Kamu pergi ke Goa Pindul.", "Mereka pergi ke Goa Pindul."], answer: "Kami pergi ke Goa Pindul." },
+            { q: "Lengkapilah kalimat berikut!\nأَنَا ______ بِسُرُورٍ فِي شَاطِئِ كُوتَا.", options: ["اسْتَمْتَعْتُ", "اسْتَمْتَعْنَا", "اسْتَمْتَعَ", "اسْتَمْتَعَتْ"], answer: "اسْتَمْتَعْتُ" },
+            { q: "Manakah kalimat yang memiliki kesesuaian ism isyarah (اسم الإشارة) dan dhamir yang benar?", options: ["هٰذِهِ بُحَيْرَةُ تُوبَا، هِيَ جَمِيلَةٌ.", "هٰذَا بُحَيْرَةُ تُوبَا، هُوَ جَمِيلٌ.", "هٰذِهِ بُحَيْرَةُ تُوبَا، هُوَ جَمِيلٌ.", "هٰذَا بُحَيْرَةُ تُوبَا، هِيَ جَمِيلَةٌ."], answer: "هٰذِهِ بُحَيْرَةُ تُوبَا، هِيَ جَمِيلَةٌ." },
+            { q: "Apa arti dari kata \"جَبَلٌ\" dalam bahasa Indonesia?", options: ["Sungai", "Laut", "Gunung", "Lembah"], answer: "Gunung" },
+            { q: "Bentuk fi'il madhi dari kata kerja \"يَشْتَرِي\" untuk dhamir \"أَنَا\" adalah ...", options: ["يَشْتَرِي", "اشْتَرَيْتُ", "اشْتَرَيْنَا", "اشْتَرَى"], answer: "اشْتَرَيْتُ" },
+            { q: "Apa arti dari kalimat \"رَكِبْنَا السَّيَّارَةَ\"؟", options: ["Saya menaiki mobil.", "Kami menaiki mobil.", "Kamu menaiki mobil.", "Dia menaiki mobil."], answer: "Kami menaiki mobil." },
+            { q: "Apa arti dari fi'il madhi \"مَكَثَ\" dalam konteks perjalanan/pariwisata?", options: ["Pergi", "Pulang", "Tinggal", "Berlari"], answer: "Tinggal" },
+            { q: "Lengkapilah kalimat informasi wisata berikut!\nشَاطِئُ لُوسَارِي هُوَ فِي ______ .", options: ["بَالِي", "مَاكَاسَار", "جَاكَرْتَا", "سُورَابَايَا"], answer: "مَاكَاسَار" },
+            { q: "Manakah kata ganti (dhamir) yang menunjukkan 'dia seorang laki-laki' (mudzakkar ghaib)?", options: ["هُوَ", "هِيَ", "أَنْتَ", "أَنَا"], answer: "هُوَ" },
+            { q: "Lengkapilah kalimat informasi wisata berikut!\nشَاطِئُ كُوتَا هُوَ فِي ______ .", options: ["بَالِي", "مَاكَاسَار", "بَانْدُونْغ", "مَدَان"], answer: "بَالِي" },
+            { q: "Apa arti dari kosakata \"فَوَاكِهُ\" dalam konteks pasar/oleh-oleh?", options: ["Sayuran", "Daging", "Buah-buahan", "Minuman"], answer: "Buah-buahan" },
+            { q: "Apa arti dari kosakata \"سُكَّرٌ\" dalam bahasa Indonesia?", options: ["Garam", "Gula", "Minyak", "Kecap"], answer: "Gula" },
+            { q: "Apa bahasa Arab yang tepat untuk kata \"Sayuran\"?", options: ["الْفَوَاكِهُ", "الْخُضْرَوَاتُ", "اللَّحْمُ", "الرُّزُّ"], answer: "الْخُضْرَوَاتُ" },
+            { q: "Susunlah kata-kata berikut menjadi ungkapan harga yang benar!\nوَخَمْسِينَ – بِمِائَةٍ – أَلْفَ – رُوبِيَةٍ", options: ["بِمِائَةٍ وَخَمْسِينَ أَلْفَ رُوبِيَةٍ", "وَخَمْسِينَ بِمِائَةٍ أَلْفَ رُوبِيَةٍ", "أَلْفَ بِمِائَةٍ وَخَمْسِينَ رُوبِيَةٍ", "رُوبِيَةٍ بِمِائَةٍ وَخَمْسِينَ أَلْفَ"], answer: "بِمِائَةٍ وَخَمْسِينَ أَلْفَ رُوبِيَةٍ" },
+            { q: "Susunlah kata-kata berikut menjadi kalimat sempurna!\nالسُّوقِ – الْبَصَلَ – الْوَالِدُ – فِي – يَشْتَرِي", options: ["يَشْتَرِي الْوَالِدُ الْبَصَلَ فِي السُّوقِ.", "فِي السُّوقِ يَشْتَرِي الْبَصَلَ الْوَالِدُ.", "الْبَصَلَ يَشْتَرِي فِي السُّوقِ الْوَالِدُ.", "الْوَالِدُ فِي يَشْتَرِي الْبَصَلَ السُّوقِ."], answer: "يَشْتَرِي الْوَالِدُ الْبَصَلَ فِي السُّوقِ." },
+            { q: "Manakah yang termasuk dhamir mutakallim (kata ganti orang pertama) dalam Bahasa Arab?", options: ["هُوَ", "أَنْتَ", "أَنَا", "هِيَ"], answer: "أَنَا" }
+        ];
+
+        let playerName = "";
+        let playerClass = "";
+        let selectedRole = "Mage";
+        let currentQIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let maxStreak = 0;
+        let heroHp = 100;
+        let enemyHp = 100;
+        let userAnswers = [];
+        let battleTimeSeconds = 0;
+        let timerInterval = null;
+        let announcerVoiceEnabled = true;
+
+        let audioCtx = null;
+        let isAudioPlaying = false;
+        let epicBgmInterval = null;
+        let bgmGainNode = null;
+
+        function forceUnlockAndPlayAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            if (isAudioPlaying) {
+                stopEpicBgm();
+            } else {
+                startEpicBgm();
+                triggerBcAnnouncer("BGM EPIK AKTIF", "Musik pertempuran MLBB dimainkan", "Epic Battle Music Active!");
+            }
+        }
+
+        function startEpicBgm() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            isAudioPlaying = true;
+            let step = 0;
+            const epicNotes = [110.00, 130.81, 146.83, 164.81, 196.00, 220.00, 246.94, 293.66];
+
+            if (epicBgmInterval) clearInterval(epicBgmInterval);
+
+            epicBgmInterval = setInterval(() => {
+                if (!isAudioPlaying) return;
+                try {
+                    const now = audioCtx.currentTime;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    bgmGainNode = gain;
+
+                    osc.type = 'sawtooth';
+                    let freq = epicNotes[step % epicNotes.length];
+                    if (step % 4 === 0) freq *= 1.5;
+                    osc.frequency.setValueAtTime(freq, now);
+
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(0.08, now + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.19);
+                    step++;
+                } catch (e) {}
+            }, 180);
+
+            updateAudioUI(true, "Epic Battle Beats Playing");
+        }
+
+        function stopEpicBgm() {
+            isAudioPlaying = false;
+            if (epicBgmInterval) clearInterval(epicBgmInterval);
+            updateAudioUI(false, "Music Paused");
+        }
+
+        function updateAudioUI(playing, trackTitle) {
+            const playBtnText = document.getElementById('audio-play-status');
+            const playBtnIcon = document.getElementById('audio-play-icon');
+            const discIcon = document.getElementById('music-disc-icon');
+            const trackDisplay = document.getElementById('track-name-display');
+
+            trackDisplay.innerText = trackTitle;
+
+            if (playing) {
+                playBtnText.innerText = "JEDA BGM";
+                playBtnIcon.className = "fa-solid fa-pause";
+                discIcon.className = "fa-solid fa-compact-disc text-amber-400 animate-spin";
+            } else {
+                playBtnText.innerText = "AKTIFKAN BGM EPIK";
+                playBtnIcon.className = "fa-solid fa-play";
+                discIcon.className = "fa-solid fa-music text-amber-400";
+            }
+        }
+
+        function toggleAnnouncerVoice() {
+            announcerVoiceEnabled = !announcerVoiceEnabled;
+            const btn = document.getElementById('announcer-icon');
+            btn.className = announcerVoiceEnabled ? "fa-solid fa-volume-high text-amber-400" : "fa-solid fa-volume-xmark text-slate-500";
+            if (announcerVoiceEnabled) {
+                triggerBcAnnouncer("ANNOUNCER ON", "Suara dubbing robot aktif!", "Announcer enabled!");
+            }
+        }
+
+        function triggerBcAnnouncer(titleText, subtitleText, announcerPhrase) {
+            const banner = document.getElementById('bc-announcer-banner');
+            const mainText = document.getElementById('bc-main-text');
+            const subText = document.getElementById('bc-sub-text');
+
+            mainText.innerText = titleText;
+            subText.innerText = subtitleText;
+
+            banner.classList.remove('hidden', 'bc-banner-active');
+            void banner.offsetWidth;
+            banner.classList.add('bc-banner-active');
+
+            if (announcerVoiceEnabled && ('speechSynthesis' in window)) {
+                window.speechSynthesis.cancel();
+
+                if (bgmGainNode && audioCtx) {
+                    try {
+                        bgmGainNode.gain.setValueAtTime(0.015, audioCtx.currentTime);
+                    } catch (e) {}
+                }
+
+                const phraseToSpeak = announcerPhrase || titleText;
+                const utterance = new SpeechSynthesisUtterance(phraseToSpeak);
+                utterance.lang = 'en-US';
+                utterance.rate = 1.0;
+                utterance.pitch = 0.75;
+                
+                const voices = window.speechSynthesis.getVoices();
+                if (voices && voices.length > 0) {
+                    const engVoice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+                    utterance.voice = engVoice;
+                }
+
+                utterance.onend = function() {
+                    if (bgmGainNode && audioCtx && isAudioPlaying) {
+                        try {
+                            bgmGainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                        } catch (e) {}
+                    }
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function selectHeroRole(role) {
+            selectedRole = role;
+            ['Mage', 'Assassin', 'Tank', 'Marksman'].forEach(r => {
+                const el = document.getElementById(`hero-role-${r}`);
+                if (r === role) {
+                    el.className = "moba-card p-3 rounded-xl border border-amber-500/40 text-center bg-amber-500/10";
+                } else {
+                    el.className = "moba-card p-3 rounded-xl border border-slate-800 text-center";
+                }
+            });
+        }
+
+        function startGame() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            const classInput = document.getElementById('player-class').value.trim();
+
+            if (!nameInput) {
+                triggerBcAnnouncer("INPUT HERO ID!", "Masukkan Nama Player terlebih dahulu!", "Please enter your hero name!");
+                return;
+            }
+
+            playerName = nameInput;
+            playerClass = classInput || "XI MIPA/IPS";
+
+            document.getElementById('display-hero-name').innerText = `${playerName.toUpperCase()} (${playerClass})`;
+            
+            const box = document.getElementById('hero-avatar-box');
+            if (selectedRole === 'Mage') box.innerHTML = '<i class="fa-solid fa-hat-wizard"></i>';
+            else if (selectedRole === 'Assassin') box.innerHTML = '<i class="fa-solid fa-bolt"></i>';
+            else if (selectedRole === 'Tank') box.innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
+            else if (selectedRole === 'Marksman') box.innerHTML = '<i class="fa-solid fa-crosshair"></i>';
+
+            currentQIndex = 0;
+            score = 0;
+            streak = 0;
+            maxStreak = 0;
+            heroHp = 100;
+            enemyHp = 100;
+            userAnswers = [];
+            battleTimeSeconds = 0;
+
+            startEpicBgm();
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                battleTimeSeconds++;
+                const mins = Math.floor(battleTimeSeconds / 60).toString().padStart(2, '0');
+                const secs = (battleTimeSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('battle-timer').innerText = `${mins}:${secs}`;
+            }, 1000);
+
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-battle').classList.remove('hidden');
+            document.getElementById('screen-battle').classList.add('flex');
+
+            renderQuestion();
+
+            setTimeout(() => {
+                triggerBcAnnouncer("MATCH START!", "Selamat datang di Land of Knowledge!", "Welcome to Mobile Legends!");
+            }, 300);
+        }
+
+        function renderQuestion() {
+            const qData = QUESTIONS_DATA[currentQIndex];
+            document.getElementById('current-q-num').innerText = currentQIndex + 1;
+            document.getElementById('question-text').innerText = qData.q;
+
+            document.getElementById('hero-hp-bar').style.width = `${heroHp}%`;
+            document.getElementById('enemy-hp-bar').style.width = `${enemyHp}%`;
+            document.getElementById('hero-hp-text').innerText = `${heroHp} / 100 HP`;
+            document.getElementById('enemy-hp-text').innerText = `${Math.round(enemyHp)}% HP`;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = "";
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn p-4 rounded-xl text-left font-semibold text-slate-200 flex items-start gap-3 w-full transition";
+                
+                const isArabic = /[\u0600-\u06FF]/.test(opt);
+                const textClass = isArabic ? "arabic-font text-xl text-amber-300 font-bold pointer-events-none" : "text-sm sm:text-base pointer-events-none";
+
+                btn.innerHTML = `
+                    <span class="w-6 h-6 rounded-md bg-slate-800 text-amber-400 font-orbitron font-bold text-xs flex items-center justify-center border border-slate-700 shrink-0 mt-0.5 pointer-events-none">
+                        ${String.fromCharCode(65 + idx)}
+                    </span>
+                    <span class="${textClass}">${opt}</span>
+                `;
+                
+                // Gunakan pointerdown/touchend agar responsif instan tanpa delay tap pada HP/browser mobile
+                btn.onclick = () => selectAnswer(opt);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(userOpt) {
+            const qData = QUESTIONS_DATA[currentQIndex];
+            const isCorrect = userOpt === qData.answer;
+
+            userAnswers.push({ question: qData.q, userAns: userOpt, correctAns: qData.answer, isCorrect: isCorrect });
+
+            if (isCorrect) {
+                score += 5;
+                streak++;
+                if (streak > maxStreak) maxStreak = streak;
+                enemyHp = Math.max(0, enemyHp - 5);
+                triggerKillAnnouncements(streak);
+                document.getElementById('battle-log').innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> ATTACK HIT!</span> Jawaban benar! (+5 Poin)`;
+            } else {
+                streak = 0;
+                heroHp = Math.max(0, heroHp - 10);
+                const qCard = document.getElementById('question-card');
+                qCard.classList.remove('shake-effect');
+                void qCard.offsetWidth;
+                qCard.classList.add('shake-effect');
+                document.getElementById('streak-badge').classList.add('hidden');
+                document.getElementById('battle-log').innerHTML = `<span class="text-red-400 font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> DAMAGE TAKEN!</span> Salah! Kunci: ${qData.answer}`;
+                triggerBcAnnouncer("DAMAGE TAKEN!", "Hero-mu terkena serangan musuh!", "You have been slain!");
+            }
+
+            currentQIndex++;
+            if (currentQIndex < QUESTIONS_DATA.length) {
+                setTimeout(() => { renderQuestion(); }, 350);
+            } else {
+                setTimeout(() => { finishGame(); }, 500);
+            }
+        }
+
+        function skipQuestion() {
+            selectAnswer("[Dilewati]");
+        }
+
+        function triggerKillAnnouncements(streakCount) {
+            const streakBadge = document.getElementById('streak-badge');
+            const streakNum = document.getElementById('streak-count');
+            streakNum.innerText = streakCount;
+            if (streakCount >= 2) streakBadge.classList.remove('hidden');
+
+            let titleText = "";
+            let announcerPhrase = "";
+            let subText = "Jawaban Benar Berturut-turut!";
+
+            if (streakCount === 1) { titleText = "FIRST BLOOD!"; announcerPhrase = "First Blood!"; }
+            else if (streakCount === 2) { titleText = "DOUBLE KILL!"; announcerPhrase = "Double Kill!"; }
+            else if (streakCount === 3) { titleText = "TRIPLE KILL!"; announcerPhrase = "Triple Kill!"; }
+            else if (streakCount === 4) { titleText = "MANIAC!"; announcerPhrase = "Maniac!"; }
+            else if (streakCount >= 5) { titleText = "SAVAGE!"; announcerPhrase = "Savage!"; }
+
+            if (titleText !== "") {
+                triggerBcAnnouncer(titleText, subText, announcerPhrase);
+            }
+        }
+
+        function finishGame() {
+            clearInterval(timerInterval);
+            document.getElementById('screen-battle').classList.add('hidden');
+            document.getElementById('screen-battle').classList.remove('flex');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            const totalCorrect = userAnswers.filter(a => a.isCorrect).length;
+            const resBadge = document.getElementById('result-status-badge');
+
+            if (score >= 70) {
+                resBadge.innerText = "VICTORY!";
+                resBadge.className = "inline-block px-8 py-2 rounded-full font-black moba-title text-2xl sm:text-4xl mb-3 shadow-xl bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 border-2 border-amber-300";
+                triggerBcAnnouncer("VICTORY!", "Pertarungan Selesai!", "Victory!");
+            } else {
+                resBadge.innerText = "DEFEAT!";
+                resBadge.className = "inline-block px-8 py-2 rounded-full font-black moba-title text-2xl sm:text-4xl mb-3 shadow-xl bg-gradient-to-r from-red-600 to-slate-800 text-slate-100 border-2 border-red-500";
+                triggerBcAnnouncer("DEFEAT!", "Coba rematch kembali!", "Defeat!");
+            }
+
+            document.getElementById('result-player-title').innerText = `${playerName} - ${score >= 70 ? 'Berhasil Menaklukkan Land of Knowledge!' : 'Tetap Semangat, Asah Kembali Mufradat Arabmu!'}`;
+            document.getElementById('result-player-info').innerText = `Kelas: ${playerClass} | Role: ${selectedRole}`;
+
+            document.getElementById('res-score').innerText = score;
+            document.getElementById('res-correct').innerText = `${totalCorrect} / 20`;
+            document.getElementById('res-streak').innerText = maxStreak;
+
+            let rank = "MASTER";
+            if (score === 100) rank = "MYTHIC GLORY";
+            else if (score >= 85) rank = "MYTHIC";
+            else if (score >= 75) rank = "LEGEND";
+            else if (score >= 60) rank = "EPIC";
+            else if (score >= 40) rank = "GRANDMASTER";
+
+            document.getElementById('res-rank').innerText = rank;
+
+            const reviewList = document.getElementById('review-list');
+            reviewList.innerHTML = "";
+            userAnswers.forEach((ans, idx) => {
+                const item = document.createElement('div');
+                item.className = `p-3 rounded-xl border ${ans.isCorrect ? 'bg-emerald-950/30 border-emerald-500/30' : 'bg-red-950/30 border-red-500/30'} text-xs flex flex-col gap-1.5`;
+                item.innerHTML = `
+                    <div class="flex items-start justify-between gap-2 font-bold">
+                        <span class="text-slate-200">Soal ${idx + 1}: ${ans.question}</span>
+                        <span class="${ans.isCorrect ? 'text-emerald-400' : 'text-red-400'} shrink-0 uppercase font-orbitron">
+                            ${ans.isCorrect ? '<i class="fa-solid fa-circle-check"></i> BENAR' : '<i class="fa-solid fa-circle-xmark"></i> SALAH'}
+                        </span>
+                    </div>
+                    <div class="text-slate-400">Jawaban Kamu: <span class="${ans.isCorrect ? 'text-emerald-300 font-bold' : 'text-red-300 font-bold'}">${ans.userAns}</span></div>
+                    ${!ans.isCorrect ? `<div class="text-amber-300 font-bold">Kunci Jawaban Benar: ${ans.correctAns}</div>` : ''}
+                `;
+                reviewList.appendChild(item);
+            });
+        }
+
+        function resetGame() {
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-start').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
